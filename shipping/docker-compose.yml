@@ -1,0 +1,33 @@
+version: '3.3'
+
+services:
+  inventoryapp:
+    build: .
+    container_name: sample-inventory-app-java
+    ports:
+      - "8090:8080"
+    networks: 
+      - sample-inventory-network
+    environment:
+      SPRING_DATA_MONGODB_HOST: sample-inventory-db
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATA_MONGODB_DATABASE: inventory
+      PORT: 8085
+  inventorydb:
+    image: "mongo:latest"
+    container_name: sample-inventory-db
+    restart: always
+    networks: 
+      - sample-inventory-network
+    # volumes: 
+    #   - ./data:/data/db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "3"
+
+
+networks: 
+  sample-inventory-network:
+    driver: bridge

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-app-inventory-java-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sample-app-inventory-java-deployment
+  template:
+    metadata:
+      labels:
+        app: sample-app-inventory-java-deployment
+    spec:
+      containers:
+      - name: sample-app-inventory-java-app
+        image: kuldeepevon/sample-inventory-app
+        resources:
+          limits: 
+            memory: "128Mi"
+            cpu: "256m"
+        ports:
+          - containerPort: 8080
+        # env:
+        #   - name: SPRING_DATA_MONGODB_HOST
+        #     value: sample-db-inventory-service
+        #   - name: SPRING_DATA_MONGODB_PORT
+        #     value: "27017"
+        #   - name: SPRING_DATA_MONGODB_DATABASE
+        #     value: inventory
+        env:
+          - name: SPRING_DATA_MONGODB_HOST
+            valueFrom: 
+              configMapKeyRef:
+                name: sample-app-inventory-configmap
+                key: db-service
+          - name: SPRING_DATA_MONGODB_PORT
+            valueFrom: 
+              configMapKeyRef:
+                name: sample-app-inventory-configmap
+                key: db-port
+          - name: SPRING_DATA_MONGODB_DATABASE
+            valueFrom: 
+              configMapKeyRef:
+                name: sample-app-inventory-configmap
+                key: db-name            
+          - name: SPRING_DATA_MONGODB_USERNAME
+            # value: admin
+            valueFrom:
+              secretKeyRef:
+                key: db_username
+                name: sample-app-inventory-secret
+          - name: SPRING_DATA_MONGODB_PASSWORD
+            # value: admin@123
+            valueFrom:
+              secretKeyRef:
+                key: db_password
+                name: sample-app-inventory-secret
+          - name: SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE
+            value: admin
+

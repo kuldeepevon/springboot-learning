@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-db-inventory-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-db-inventory-deployment
+  template:
+    metadata:
+      labels:
+        app: sample-db-inventory-deployment
+    spec:
+      containers:
+      - name: sample-db-inventory
+        image: mongo
+        resources:
+          limits: 
+            memory: "256Mi"
+            cpu: "256m"
+        ports:
+          - containerPort: 27017
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            # value: admin
+            valueFrom:
+              secretKeyRef:
+                key: db_username
+                name: sample-app-inventory-secret
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            # value: admin@123
+            valueFrom:
+              secretKeyRef:
+                key: db_password
+                name: sample-app-inventory-secret
+            

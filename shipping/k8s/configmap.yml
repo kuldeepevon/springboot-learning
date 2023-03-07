@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sample-app-inventory-configmap
+data:
+  db-service: sample-db-inventory-service
+  db-name: inventory
+  db-port: "27017"
